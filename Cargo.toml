@@ -1,0 +1,12 @@
+[package]
+name = "serverless-payments-rs"
+version = "0.1.0"
+edition = "2021"
+
+
+[lib]
+name = "serverless_payments"
+path = "src/lib.rs"
+
+
+[dependencies]
