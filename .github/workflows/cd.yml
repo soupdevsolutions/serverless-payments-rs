@@ -24,6 +24,8 @@ jobs:
         - name: Build Lambda functions
           run: python3 ./scripts/build.py
         - name: Plan Terraform
-          run: terraform plan
+          run: terraform -chdir=infrastructure init
+        - name: Plan Terraform
+          run: terraform -chdir=infrastructure plan
         - name: Apply Terraform
-          run: terraform apply
+          run: terraform -chdir=infrastructure apply

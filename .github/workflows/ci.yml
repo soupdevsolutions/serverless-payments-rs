@@ -69,4 +69,4 @@ jobs:
           with:
             terraform_version: 0.14.7
         - name: Run terraform fmt
-          run: terraform fmt -check
+          run: terraform -chdir=infrastructure fmt -check
