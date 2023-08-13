@@ -2,8 +2,8 @@
 resource "aws_lambda_function" "initiate_payment_lambda" {
   function_name = "InitiatePayment"
 
-  source_code_hash = filebase64sha256("data/lambdas/initiate_payment")
-  filename         = "data/lambdas/initiate_payment"
+  source_code_hash = filebase64sha256("data/lambdas/initiate_payment.zip")
+  filename         = "data/lambdas/initiate_payment.zip"
 
   handler = "func"
   runtime = "provided"
@@ -23,8 +23,8 @@ resource "aws_lambda_function" "initiate_payment_lambda" {
 resource "aws_lambda_function" "finish_payment_lambda" {
   function_name = "FinishPayment"
 
-  source_code_hash = filebase64sha256("data/lambdas/finish_payment")
-  filename         = "data/lambdas/finish_payment"
+  source_code_hash = filebase64sha256("data/lambdas/finish_payment.zip")
+  filename         = "data/lambdas/finish_payment.zip"
 
   handler = "func"
   runtime = "provided"
