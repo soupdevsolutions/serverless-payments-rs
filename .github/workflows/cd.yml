@@ -9,7 +9,7 @@ on:
         - 'src/**'
         - 'scripts/**'
         - 'Cargo.toml'
-        - './github/workflows/cd.yml'
+        - '.github/workflows/cd.yml'
 
 
 jobs:
