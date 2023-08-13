@@ -6,7 +6,8 @@ variable "AWS_REGION" {
 }
 
 variable "stripe_api_token" {
-  type = string
+  type    = string
+  default = ""
 }
 
 variable "AWS_ACCESS_KEY_ID" {
