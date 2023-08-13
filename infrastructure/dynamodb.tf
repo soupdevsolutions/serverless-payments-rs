@@ -7,10 +7,4 @@ resource "aws_dynamodb_table" "payments" {
     name = "id"
     type = "S"
   }
-
-  global_secondary_index {
-    name            = "PaymentsFromIndex"
-    hash_key        = "from"
-    projection_type = "ALL"
-  }
 }
