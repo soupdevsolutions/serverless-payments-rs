@@ -17,7 +17,7 @@ functions = [name for name in os.listdir("target/lambda/")]
 commands = ["mkdir -p infrastructure/data/lambdas"]
 
 for function in functions:
-    commands.append("zip {function}.zip target/lambda/{function}/bootstrap")
-    commands.append("cp {function}.zip infrastructure/data/lambdas/{function}.zip")
+    commands.append(f"zip {function}.zip target/lambda/{function}/bootstrap")
+    commands.append(f"cp {function}.zip infrastructure/data/lambdas/{function}.zip")
 os.system("; ".join(commands))
 
