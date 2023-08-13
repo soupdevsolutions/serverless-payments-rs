@@ -11,6 +11,6 @@ os.system("; ".join(commands))
 
 functions = [name for name in os.listdir("target/lambda/")]
 
-commands = [f"cp target/lambda/{function}/bootstrap infrastructure/data/lambdas/{function}" for function in functions"]
+commands = [f"cp target/lambda/{function}/bootstrap infrastructure/data/lambdas/{function}" for function in functions]
 os.system("; ".join(commands))
 
