@@ -36,4 +36,4 @@ jobs:
         - name: Plan Terraform
           run: terraform -chdir=infrastructure plan -var 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -var 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -var 'AWS_REGION=${{ secrets.AWS_REGION }}'
         - name: Apply Terraform
-          run: terraform -chdir=infrastructure apply -var 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -var 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -var 'AWS_REGION=${{ secrets.AWS_REGION }}'
+          run: terraform -chdir=infrastructure apply -auto-approve -var 'AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}' -var 'AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}' -var 'AWS_REGION=${{ secrets.AWS_REGION }}'
