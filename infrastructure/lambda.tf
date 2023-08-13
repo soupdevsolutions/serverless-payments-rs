@@ -14,7 +14,7 @@ resource "aws_lambda_function" "initiate_payment_lambda" {
     variables = {
       STRIPE_SECRET_KEY   = var.stripe_api_token
       PAYMENTS_TABLE_NAME = aws_dynamodb_table.payments.name
-      DOMAIN              = aws_s3_bucket_website_configuration.payments-client.website_endpoint
+      DOMAIN              = ""
     }
   }
 }
