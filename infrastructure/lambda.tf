@@ -35,7 +35,7 @@ resource "aws_lambda_function" "finish_payment_lambda" {
     variables = {
       PAYMENTS_TABLE_NAME   = aws_dynamodb_table.payments.name
       STRIPE_SECRET_KEY     = var.stripe_api_token
-      STRIPE_WEBHOOK_SECRET = stripe_webhook_endpoint.successful_payments.secret
+      STRIPE_WEBHOOK_SECRET = ""
     }
   }
 }
