@@ -6,6 +6,6 @@ async fn main() -> Result<(), Error> {
     Ok(())
 }
 
-async fn handler(event: Request) -> Result<Response<Body>, Error> {
+async fn handler(_event: Request) -> Result<Response<Body>, Error> {
     Ok(Response::new(Body::from("Hello world!")))
 }
