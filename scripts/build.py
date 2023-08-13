@@ -7,7 +7,7 @@ commands = [
     "sudo apt install musl-tools",
     "sudo apt install pkg-config",
     "sudo apt install libssl-dev",
-    "cargo install cargo-lambda",
+    "pip3 install cargo-lambda",
     "cargo lambda build --release"
 ]
 os.system("; ".join(commands))
