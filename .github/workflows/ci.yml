@@ -1,0 +1,72 @@
+name: CI
+
+on:
+    push:
+        branches:
+        - main
+    pull_request:
+        branches:
+        - main
+
+env:
+    RUSTFLAGS: -Dwarnings
+
+jobs:
+    rust-test:
+        name: Test
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        - name: Install Rust
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+            override: true
+        - name: Run tests
+          run: cargo test --all
+    rust-clippy:
+        name: Clippy
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        - name: Install Rust
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+            override: true
+        - name: Run clippy
+          run: cargo clippy --all -- -D warnings
+    rust-fmt:
+        name: Fmt
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        - name: Install Rust
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+            override: true
+        - name: Run fmt
+          run: cargo fmt --all -- --check
+    terraform-validate:
+        name: Terraform Validate
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v1
+          with:
+            terraform_version: 0.14.7
+        - name: Run terraform validate
+          run: terraform validate
+    terraform-fmt:
+        name: Terraform Fmt
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v1
+          with:
+            terraform_version: 0.14.7
+        - name: Run terraform fmt
+          run: terraform fmt -check

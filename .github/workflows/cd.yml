@@ -1,0 +1,24 @@
+name: CI
+
+on:
+    push:
+        branches:
+        - main
+
+jobs:
+    deploy:
+        name: Test
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        - name: Install Rust
+          uses: actions-rs/toolchain@v1
+          with:
+            toolchain: stable
+            override: true
+        - name: Build Lambda functions
+          run: python3 ./scripts/build.py
+        - name: Plan Terraform
+          run: terraform plan
+        - name: Apply Terraform
+          run: terraform apply
