@@ -4,6 +4,11 @@ on:
     push:
         branches:
         - main
+        paths:
+        - 'infrastructure/**'
+        - 'src/**'
+        - 'scripts/**'
+
 
 jobs:
     deploy:
