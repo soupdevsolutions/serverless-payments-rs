@@ -18,7 +18,5 @@ path = "src/finish_payment.rs"
 
 
 [dependencies]
-aws-sdk-dynamodb = "0.28.0"
 lambda_http = "0.8.1"
-uuid = "1.4.0"
 tokio = { version = "1", features = ["full"]}
