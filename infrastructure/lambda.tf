@@ -12,7 +12,7 @@ resource "aws_lambda_function" "initiate_payment_lambda" {
 
   environment {
     variables = {
-      STRIPE_SECRET_KEY   = var.stripe_api_token
+      STRIPE_SECRET_KEY   = var.STRIPE_API_KEY
       PAYMENTS_TABLE_NAME = aws_dynamodb_table.payments.name
       DOMAIN              = ""
     }
@@ -34,7 +34,7 @@ resource "aws_lambda_function" "finish_payment_lambda" {
   environment {
     variables = {
       PAYMENTS_TABLE_NAME   = aws_dynamodb_table.payments.name
-      STRIPE_SECRET_KEY     = var.stripe_api_token
+      STRIPE_SECRET_KEY     = var.STRIPE_API_KEY
       STRIPE_WEBHOOK_SECRET = ""
     }
   }
