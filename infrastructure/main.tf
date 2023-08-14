@@ -4,7 +4,7 @@ terraform {
       source  = "hashicorp/aws"
       version = "4.4.0"
     }
-    stripe {
+    stripe = {
       source  = "franckverrot/stripe"
       version = "1.8.0"
     }
