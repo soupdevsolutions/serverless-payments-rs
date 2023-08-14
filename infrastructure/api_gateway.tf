@@ -46,7 +46,7 @@ resource "aws_apigatewayv2_integration" "initiate_payment_integration" {
 
 resource "aws_apigatewayv2_route" "initiate_payment_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "POST /pay"
+  route_key = "POST /payment/inititate"
   target    = "integrations/${aws_apigatewayv2_integration.initiate_payment_integration.id}"
 }
 
@@ -72,7 +72,7 @@ resource "aws_apigatewayv2_integration" "finish_payment_integration" {
 
 resource "aws_apigatewayv2_route" "finish_payment_route" {
   api_id    = aws_apigatewayv2_api.api.id
-  route_key = "POST /payment/log"
+  route_key = "POST /payment/finish"
   target    = "integrations/${aws_apigatewayv2_integration.finish_payment_integration.id}"
 }
 
