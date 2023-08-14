@@ -5,7 +5,7 @@ variable "AWS_REGION" {
   default = "eu-west-1"
 }
 
-variable "STRIPE_SECRET_KEY" {
+variable "STRIPE_API_KEY" {
   type = string
 }
 
