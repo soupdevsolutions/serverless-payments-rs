@@ -5,8 +5,8 @@ terraform {
       version = "4.4.0"
     }
     stripe {
-      source  = "lukasaron/stripe"
-      version = "1.7.7"
+      source  = "franckverrot/stripe"
+      version = "1.8.0"
     }
   }
 
