@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "4.4.0"
     }
+    stripe {
+      source  = "lukasaron/stripe"
+      version = "1.7.7"
+    }
   }
 
   backend "s3" {
@@ -20,3 +24,5 @@ provider "aws" {
   access_key = var.AWS_ACCESS_KEY_ID
   secret_key = var.AWS_SECRET_ACCESS_KEY
 }
+
+provider "stripe" {}

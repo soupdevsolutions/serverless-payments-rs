@@ -6,7 +6,7 @@ variable "AWS_REGION" {
 }
 
 variable "STRIPE_SECRET_KEY" {
-  type    = string
+  type = string
 }
 
 variable "AWS_ACCESS_KEY_ID" {
