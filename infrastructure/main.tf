@@ -25,4 +25,6 @@ provider "aws" {
   secret_key = var.AWS_SECRET_ACCESS_KEY
 }
 
-provider "stripe" {}
+provider "stripe" {
+  api_token = var.STRIPE_API_KEY
+}
