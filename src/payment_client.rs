@@ -1,4 +1,4 @@
-use crate::domain::{Payment, PaymentRequest, PaymentStatus};
+use crate::domain::{Payment, PaymentRequest};
 use stripe::{Client, CreateCustomer, CreatePaymentIntent, Currency, Customer, PaymentIntent};
 
 pub struct PaymentClient {
