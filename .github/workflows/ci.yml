@@ -58,7 +58,7 @@ jobs:
           with:
             terraform_version: 0.14.7
         - name: Run terraform validate
-          run: terraform validate
+          run: terraform -chdir=infrastructure validate
     terraform-fmt:
         name: Terraform Fmt
         runs-on: ubuntu-latest
