@@ -3,9 +3,9 @@ use crate::{
     environment::{get_env_var, DOMAIN, STRIPE_SECRET_KEY},
 };
 use stripe::{
-    CheckoutSession, Client, CreateCheckoutSession, CreateCheckoutSessionLineItems,
-    CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData,
-    Currency,
+    CheckoutSession, CheckoutSessionMode, Client, CreateCheckoutSession,
+    CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData,
+    CreateCheckoutSessionLineItemsPriceDataProductData, Currency,
 };
 
 pub struct PaymentClient {
@@ -46,6 +46,8 @@ impl PaymentClient {
             }),
             ..Default::default()
         }]);
+        create_session_params.mode = Some(CheckoutSessionMode::Payment);
+
         let session = CheckoutSession::create(&self.stripe_client, create_session_params)
             .await
             .map_err(|e| e.to_string())?;
