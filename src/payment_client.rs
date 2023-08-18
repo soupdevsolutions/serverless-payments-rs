@@ -44,6 +44,7 @@ impl PaymentClient {
                 }),
                 ..Default::default()
             }),
+            quantity: Some(1),
             ..Default::default()
         }]);
         create_session_params.mode = Some(CheckoutSessionMode::Payment);
