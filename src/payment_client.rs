@@ -19,6 +19,7 @@ impl PaymentClient {
         }
     }
 
+    #[tracing::instrument(skip(self, payment_request), fields(sender = %payment_request.sender, amount = %payment_request.amount))]
     pub async fn initiate_payment(
         self,
         payment_request: &PaymentRequest,

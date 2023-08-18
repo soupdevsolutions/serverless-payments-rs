@@ -4,13 +4,21 @@ use serverless_payments::{
     domain::PaymentRequest, payment_client::PaymentClient, payments_repository::PaymentsRepository,
     request_utils::get_body,
 };
+use tracing_subscriber::FmtSubscriber;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
+    FmtSubscriber::builder()
+        .with_max_level(tracing::Level::INFO)
+        .with_ansi(false)
+        .without_time()
+        .with_target(false)
+        .init();
     lambda_http::run(service_fn(handler)).await?;
     Ok(())
 }
 
+#[tracing::instrument]
 async fn handler(event: Request) -> Result<Response<Body>, Error> {
     // Get the payment request from the event
     println!("Hello!");
