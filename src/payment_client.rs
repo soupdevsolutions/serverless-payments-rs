@@ -1,5 +1,13 @@
-use crate::domain::{Payment, PaymentRequest};
-use stripe::{Client, CreateCustomer, CreatePaymentIntent, Currency, Customer, PaymentIntent};
+use crate::{
+    domain::{payment, Payment, PaymentRequest},
+    environment::{get_env_var, DOMAIN},
+};
+use serde::__private::de;
+use stripe::{
+    CheckoutSession, Client, CreateCheckoutSession, CreateCheckoutSessionLineItems,
+    CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData,
+    CreateCustomer, CreatePaymentIntent, Currency, Customer, PaymentIntent,
+};
 
 pub struct PaymentClient {
     stripe_client: stripe::Client,
@@ -14,26 +22,26 @@ impl PaymentClient {
 
     pub async fn initiate_payment(
         self,
-        payment_request: PaymentRequest,
-    ) -> Result<Payment, String> {
-        let customer = Customer::create(
-            &self.stripe_client,
-            CreateCustomer {
-                name: Some(&payment_request.sender),
-                description: Some(&format!("Payment from {}", payment_request.sender)),
+        payment_request: &PaymentRequest,
+    ) -> Result<Option<String>, String> {
+        let domain = get_env_var(DOMAIN)?;
+
+        let mut create_session_params = CreateCheckoutSession::new(&domain);
+        create_session_params.line_items = Some(vec![CreateCheckoutSessionLineItems {
+            price_data: Some(CreateCheckoutSessionLineItemsPriceData {
+                currency: Currency::USD,
+                product_data: Some(CreateCheckoutSessionLineItemsPriceDataProductData {
+                    name: format!("Payment from {}", payment_request.sender),
+                    ..Default::default()
+                }),
                 ..Default::default()
-            },
-        )
-        .await
-        .map_err(|e| e.to_string())?;
-
-        let mut create_intent = CreatePaymentIntent::new(payment_request.amount, Currency::USD);
-        create_intent.customer = Some(customer.id);
-
-        PaymentIntent::create(&self.stripe_client, create_intent)
+            }),
+            ..Default::default()
+        }]);
+        let session = CheckoutSession::create(&self.stripe_client, create_session_params)
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok(payment_request.into())
+        Ok(session.url)
     }
 }

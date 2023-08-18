@@ -17,14 +17,24 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
 
     // Send the event to Stripe
     let payment_client = PaymentClient::new("");
-    let payment = payment_client.initiate_payment(payment_request).await?;
+    let redirect_url = payment_client.initiate_payment(&payment_request).await?;
 
     // Save the data to the database
     let config = aws_config::load_from_env().await;
     let db_client = Client::new(&config);
-    let payments_repository = PaymentsRepository::new(db_client, "payments");
-    payments_repository.insert_payment(payment).await?;
-    // Return the redirect URI
+    let payments_repository = PaymentsRepository::new(db_client);
+    payments_repository
+        .insert_payment(payment_request.into())
+        .await?;
 
-    Ok(Response::new(Body::from("Hello world!")))
+    // Return the redirect URI
+    let response = InitiatePaymentResponse { redirect_url };
+    Ok(Response::new(Body::from(
+        serde_json::to_string(&response).unwrap(),
+    )))
+}
+
+#[derive(serde::Serialize)]
+pub struct InitiatePaymentResponse {
+    pub redirect_url: Option<String>,
 }

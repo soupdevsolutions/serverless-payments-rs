@@ -1,6 +1,9 @@
 use aws_sdk_dynamodb::{types::AttributeValue, Client};
 
-use crate::domain::Payment;
+use crate::{
+    domain::Payment,
+    environment::{get_env_var, PAYMENTS_TABLE},
+};
 
 pub struct PaymentsRepository {
     client: Client,
@@ -8,11 +11,11 @@ pub struct PaymentsRepository {
 }
 
 impl PaymentsRepository {
-    pub fn new(client: Client, table_name: impl Into<String>) -> Self {
-        Self {
-            client,
-            table_name: table_name.into(),
-        }
+    pub fn new(client: Client) -> Self {
+        let table_name = get_env_var(PAYMENTS_TABLE)
+            .unwrap_or_else(|_| format!("{} variable not set", PAYMENTS_TABLE));
+
+        Self { client, table_name }
     }
 
     pub async fn insert_payment(self, payment: Payment) -> Result<(), String> {
