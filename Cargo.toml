@@ -19,4 +19,10 @@ path = "src/finish_payment.rs"
 
 [dependencies]
 lambda_http = "0.8.1"
-tokio = { version = "1", features = ["full"]}
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+async-stripe = { version = "0.22", features = ["runtime-tokio-hyper"] }
+aws-sdk-dynamodb = "0.29.0"
+aws-config = "0.56.0"
+uuid = { version = "1.4.1", features = ["v4"] }
