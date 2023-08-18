@@ -21,12 +21,10 @@ async fn main() -> Result<(), Error> {
 #[tracing::instrument]
 async fn handler(event: Request) -> Result<Response<Body>, Error> {
     // Get the payment request from the event
-    println!("Hello!");
     let payment_request: PaymentRequest = get_body(event)?;
-    println!("Payment request: {:?}", payment_request);
 
     // Send the event to Stripe
-    let payment_client = PaymentClient::new("");
+    let payment_client = PaymentClient::new();
     let redirect_url = payment_client.initiate_payment(&payment_request).await?;
 
     // Save the data to the database

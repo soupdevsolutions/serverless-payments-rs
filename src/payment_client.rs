@@ -1,6 +1,6 @@
 use crate::{
     domain::PaymentRequest,
-    environment::{get_env_var, DOMAIN},
+    environment::{get_env_var, DOMAIN, STRIPE_SECRET_KEY},
 };
 use stripe::{
     CheckoutSession, Client, CreateCheckoutSession, CreateCheckoutSessionLineItems,
@@ -12,8 +12,16 @@ pub struct PaymentClient {
     stripe_client: stripe::Client,
 }
 
+impl Default for PaymentClient {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PaymentClient {
-    pub fn new(secret_key: impl Into<String>) -> Self {
+    pub fn new() -> Self {
+        let secret_key = get_env_var(STRIPE_SECRET_KEY)
+            .unwrap_or_else(|_| format!("{} variable not set", STRIPE_SECRET_KEY));
         Self {
             stripe_client: Client::new(secret_key),
         }
