@@ -4,9 +4,9 @@ import os
 import sys
 
 commands = [
-    "sudo apt-get install musl-tools",
-    "sudo apt-get install pkg-config",
-    "sudo apt-get install libssl-dev",
+    "sudo apt-get install openssl libssl musl-tools pkg-config libssl-dev",
+    "OPENSSL_LIB_DIR=\"/usr/lib/x86_64-linux-gnu\"",
+    "OPENSSL_INCLUDE_DIR=\"/usr/include/openssl\"",
     "pip3 install cargo-lambda",
     "cargo lambda build --release"
 ]
