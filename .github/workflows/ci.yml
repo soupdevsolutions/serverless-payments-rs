@@ -48,6 +48,15 @@ jobs:
             override: true
         - name: Run fmt
           run: cargo fmt --all -- --check
+    terraform-init:
+        name: Terraform Init
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v2
+        - name: Install Terraform
+          uses: hashicorp/setup-terraform@v1
+        - name: Run terraform init
+          run: terraform -chdir=infrastructure init
     terraform-validate:
         name: Terraform Validate
         runs-on: ubuntu-latest
@@ -55,8 +64,6 @@ jobs:
         - uses: actions/checkout@v2
         - name: Install Terraform
           uses: hashicorp/setup-terraform@v1
-          with:
-            terraform_version: 0.14.7
         - name: Run terraform validate
           run: terraform -chdir=infrastructure validate
     terraform-fmt:
@@ -66,7 +73,5 @@ jobs:
         - uses: actions/checkout@v2
         - name: Install Terraform
           uses: hashicorp/setup-terraform@v1
-          with:
-            terraform_version: 0.14.7
         - name: Run terraform fmt
           run: terraform -chdir=infrastructure fmt -check
