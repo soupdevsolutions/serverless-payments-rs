@@ -13,7 +13,9 @@ async fn main() -> Result<(), Error> {
 
 async fn handler(event: Request) -> Result<Response<Body>, Error> {
     // Get the payment request from the event
+    println!("Hello!");
     let payment_request: PaymentRequest = get_body(event)?;
+    println!("Payment request: {:?}", payment_request);
 
     // Send the event to Stripe
     let payment_client = PaymentClient::new("");
