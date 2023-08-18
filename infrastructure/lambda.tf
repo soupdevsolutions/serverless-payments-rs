@@ -6,7 +6,7 @@ resource "aws_lambda_function" "initiate_payment_lambda" {
   filename         = "data/lambdas/initiate_payment.zip"
 
   handler = "handler"
-  runtime = "provided"
+  runtime = "provided.al2"
 
   role = aws_iam_role.initiate_payment.arn
 
@@ -27,7 +27,7 @@ resource "aws_lambda_function" "finish_payment_lambda" {
   filename         = "data/lambdas/finish_payment.zip"
 
   handler = "handler"
-  runtime = "provided"
+  runtime = "provided.al2"
 
   role = aws_iam_role.finish_payment.arn
 
