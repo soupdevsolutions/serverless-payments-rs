@@ -9,7 +9,7 @@ commands = [
     "OPENSSL_INCLUDE_DIR=\"/usr/include/openssl\"",
     "cargo clean",
     "pip3 install cargo-lambda",
-    "cargo lambda build --release"
+    "cargo lambda build --release --output-format zip"
 ]
 os.system("; ".join(commands))
 
@@ -18,7 +18,6 @@ functions = [name for name in os.listdir("target/lambda/")]
 commands = ["mkdir -p infrastructure/data/lambdas"]
 
 for function in functions:
-    commands.append(f"zip {function}.zip target/lambda/{function}/bootstrap")
-    commands.append(f"cp {function}.zip infrastructure/data/lambdas/{function}.zip")
+    commands.append(f"cp target/lambda/{function}/bootstrap.zip infrastructure/data/lambdas/{function}.zip")
 os.system("; ".join(commands))
 
