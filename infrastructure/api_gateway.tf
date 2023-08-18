@@ -14,7 +14,6 @@ resource "aws_apigatewayv2_api" "api" {
 resource "aws_apigatewayv2_stage" "api_stage" {
   api_id        = aws_apigatewayv2_api.api.id
   name          = "$default"
-  auto_deploy   = true
   deployment_id = aws_apigatewayv2_deployment.api_deployment.id
 }
 
@@ -24,6 +23,14 @@ resource "aws_apigatewayv2_deployment" "api_deployment" {
 
   lifecycle {
     create_before_destroy = true
+  }
+
+  triggers = {
+    redeployment = sha1(join(",", tolist([
+      jsonencode(aws_apigatewayv2_api.api),
+      jsonencode(aws_apigatewayv2_route.initiate_payment_route),
+      jsonencode(aws_apigatewayv2_route.finish_payment_route),
+    ])))
   }
 
   depends_on = [
