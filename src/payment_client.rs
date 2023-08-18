@@ -1,12 +1,11 @@
 use crate::{
-    domain::{payment, Payment, PaymentRequest},
+    domain::PaymentRequest,
     environment::{get_env_var, DOMAIN},
 };
-use serde::__private::de;
 use stripe::{
     CheckoutSession, Client, CreateCheckoutSession, CreateCheckoutSessionLineItems,
     CreateCheckoutSessionLineItemsPriceData, CreateCheckoutSessionLineItemsPriceDataProductData,
-    CreateCustomer, CreatePaymentIntent, Currency, Customer, PaymentIntent,
+    Currency,
 };
 
 pub struct PaymentClient {
