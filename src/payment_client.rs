@@ -42,6 +42,7 @@ impl PaymentClient {
                     name: format!("Payment from {}", payment_request.sender),
                     ..Default::default()
                 }),
+                unit_amount: Some(payment_request.amount),
                 ..Default::default()
             }),
             quantity: Some(1),
