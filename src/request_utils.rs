@@ -14,3 +14,15 @@ where
     let result: T = serde_json::from_str(body).map_err(|e| e.to_string())?;
     Ok(result)
 }
+
+#[tracing::instrument]
+pub fn get_header(event: &Request, header: &str) -> Result<String, String> {
+    let header = event
+        .headers()
+        .get(header)
+        .ok_or_else(|| format!("Missing header: {}", header))?
+        .to_str()
+        .map_err(|e| e.to_string())?
+        .to_string();
+    Ok(header)
+}

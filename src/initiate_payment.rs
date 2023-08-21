@@ -1,7 +1,6 @@
-use aws_sdk_dynamodb::Client;
 use lambda_http::{service_fn, Body, Error, Request, Response};
 use serverless_payments::{
-    domain::PaymentRequest, payment_client::PaymentClient, payments_repository::PaymentsRepository,
+    database::PaymentsRepository, domain::PaymentRequest, payment_client::PaymentClient,
     request_utils::get_body,
 };
 use tracing_subscriber::FmtSubscriber;
@@ -28,9 +27,7 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
     let redirect_url = payment_client.initiate_payment(&payment_request).await?;
 
     // Save the data to the database
-    let config = aws_config::load_from_env().await;
-    let db_client = Client::new(&config);
-    let payments_repository = PaymentsRepository::new(db_client);
+    let payments_repository = PaymentsRepository::get().await;
     payments_repository
         .insert_payment(payment_request.into())
         .await?;
