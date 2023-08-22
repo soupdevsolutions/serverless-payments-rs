@@ -27,22 +27,21 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
             Error::from("Error constructing webhook event")
         })?;
 
-    let payment_intent_id = {
-        let payment_intent = match webhook_event.data.object {
+    let payment_id = {
+        let metadata = match webhook_event.data.object {
             // safe to unwrap, as this charge is the result of a PaymentIntent confirmation
-            EventObject::Charge(charge) => charge.payment_intent.unwrap(),
+            EventObject::Charge(charge) => charge.metadata,
             _ => {
-                tracing::error!("Error getting payment intent");
-                return Err(Error::from("Error getting payment intent"));
+                tracing::error!("Error getting metadata");
+                return Err(Error::from("Error getting metadata"));
             }
         };
-
-        payment_intent.id()
+        metadata.get("payment_id").unwrap().to_string()
     };
 
     let payment_repository = PaymentsRepository::get().await;
     payment_repository
-        .update_payment_status(payment_intent_id.as_str(), PaymentStatus::Completed)
+        .update_payment_status(&payment_id, PaymentStatus::Completed)
         .await?;
 
     Ok(Response::new(Body::from(())))

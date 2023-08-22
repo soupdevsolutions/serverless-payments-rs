@@ -24,7 +24,7 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
     // Save the data in DynamoDB
     let payments_repository = PaymentsRepository::get().await;
     let payment = Payment::new(
-        initiate_payment.payment_intent_id,
+        initiate_payment.payment_id,
         payment_request.amount,
         payment_request.sender.clone(),
         PaymentStatus::Pending,
@@ -43,7 +43,7 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     FmtSubscriber::builder()
-        .with_max_level(tracing::Level::INFO)
+        .with_max_level(tracing::Level::DEBUG)
         .with_ansi(false)
         .without_time()
         .with_target(false)

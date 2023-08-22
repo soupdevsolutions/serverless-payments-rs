@@ -28,3 +28,4 @@ aws-config = "0.56.0"
 openssl = { version = "0.10", features = ["vendored"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
+uuid = { version = "1.4.1", features = ["v4"] }
