@@ -6,7 +6,7 @@ use crate::{
     environment::{get_env_var, PAYMENTS_TABLE},
 };
 
-static PAYMENTS_REPOSITORY: OnceCell<PaymentsRepository> = OnceCell::const_new();
+pub static PAYMENTS_REPOSITORY: OnceCell<PaymentsRepository> = OnceCell::const_new();
 
 #[derive(Clone)]
 pub struct PaymentsRepository {
@@ -27,7 +27,7 @@ impl PaymentsRepository {
 
     fn new(client: Client) -> Self {
         let table_name = get_env_var(PAYMENTS_TABLE)
-            .unwrap_or_else(|_| format!("{} variable not set", PAYMENTS_TABLE));
+            .unwrap_or_else(|_| panic!("{} variable not set", PAYMENTS_TABLE));
 
         Self { client, table_name }
     }

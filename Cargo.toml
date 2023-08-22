@@ -25,7 +25,6 @@ serde_json = "1.0"
 async-stripe = { version = "0.22", features = ["runtime-tokio-hyper"] }
 aws-sdk-dynamodb = "0.29.0"
 aws-config = "0.56.0"
-uuid = { version = "1.4.1", features = ["v4"] }
 openssl = { version = "0.10", features = ["vendored"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"
