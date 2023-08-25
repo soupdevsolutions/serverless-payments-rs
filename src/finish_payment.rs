@@ -2,7 +2,7 @@ use lambda_http::{service_fn, Body, Error, Request, Response};
 use serverless_payments::{
     database::PaymentsRepository,
     domain::PaymentStatus,
-    environment::{get_env_var, STRIPE_SECRET_KEY},
+    environment::{get_env_var, STRIPE_WEBHOOK_SECRET},
     request_utils::get_header,
 };
 use stripe::{EventObject, Webhook};
@@ -12,7 +12,7 @@ const SIGNATURE_HEADER_KEY: &str = "Stripe-Signature";
 
 async fn handler(event: Request) -> Result<Response<Body>, Error> {
     let signature = get_header(&event, SIGNATURE_HEADER_KEY)?;
-    let secret_key = get_env_var(STRIPE_SECRET_KEY)?;
+    let webhook_secret = get_env_var(STRIPE_WEBHOOK_SECRET)?;
     let event_body = match event.body() {
         Body::Text(s) => s,
         _ => {
@@ -25,10 +25,10 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
         "Event body: {}, signature: {}, secret_key: {}",
         event_body,
         signature,
-        secret_key
+        webhook_secret
     );
     let webhook_event =
-        Webhook::construct_event(event_body, &signature, &secret_key).map_err(|e| {
+        Webhook::construct_event(event_body, &signature, &webhook_secret).map_err(|e| {
             tracing::error!("Error constructing webhook event: {e}");
             Error::from(format!("Error constructing webhook event: {e}"))
         })?;
