@@ -32,11 +32,6 @@ resource "aws_apigatewayv2_deployment" "api_deployment" {
       jsonencode(aws_apigatewayv2_route.finish_payment_route),
     ])))
   }
-
-  depends_on = [
-    aws_apigatewayv2_route.initiate_payment_route,
-    aws_apigatewayv2_route.finish_payment_route,
-  ]
 }
 
 # INITIATE PAYMENT
