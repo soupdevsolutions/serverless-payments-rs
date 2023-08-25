@@ -21,6 +21,12 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
         }
     };
 
+    tracing::info!(
+        "Event body: {}, signature: {}, secret_key: {}",
+        event_body,
+        signature,
+        secret_key
+    );
     let webhook_event =
         Webhook::construct_event(event_body, &signature, &secret_key).map_err(|_| {
             tracing::error!("Error constructing webhook event");
