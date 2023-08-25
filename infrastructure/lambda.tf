@@ -37,4 +37,6 @@ resource "aws_lambda_function" "finish_payment_lambda" {
       STRIPE_WEBHOOK_SECRET = stripe_webhook_endpoint.successful_payments.secret
     }
   }
+
+  depends_on = [stripe_webhook_endpoint.successful_payments]
 }
