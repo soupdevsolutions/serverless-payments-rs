@@ -28,9 +28,9 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
         secret_key
     );
     let webhook_event =
-        Webhook::construct_event(event_body, &signature, &secret_key).map_err(|_| {
-            tracing::error!("Error constructing webhook event");
-            Error::from("Error constructing webhook event")
+        Webhook::construct_event(event_body, &signature, &secret_key).map_err(|e| {
+            tracing::error!("Error constructing webhook event: {e}");
+            Error::from(format!("Error constructing webhook event: {e}"))
         })?;
 
     let payment_id = {
