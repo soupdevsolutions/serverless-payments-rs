@@ -5,7 +5,8 @@ use crate::{
 use stripe::{
     CheckoutSession, CheckoutSessionMode, Client, CreateCheckoutSession,
     CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData,
-    CreateCheckoutSessionLineItemsPriceDataProductData, Currency,
+    CreateCheckoutSessionLineItemsPriceDataProductData, CreateCheckoutSessionPaymentIntentData,
+    Currency, Metadata,
 };
 
 pub struct PaymentClient {
@@ -29,7 +30,7 @@ impl PaymentClient {
 
     #[tracing::instrument(skip(self, payment), fields(sender = %payment.sender, amount = %payment.amount))]
     pub async fn initiate_payment(self, payment: &Payment) -> Result<String, String> {
-        let domain = format!("{}?payment_id={}", get_env_var(DOMAIN)?, payment.id);
+        let domain = get_env_var(DOMAIN)?;
 
         let mut create_session_params = CreateCheckoutSession::new(&domain);
         create_session_params.line_items = Some(vec![CreateCheckoutSessionLineItems {
@@ -46,6 +47,13 @@ impl PaymentClient {
             ..Default::default()
         }]);
         create_session_params.mode = Some(CheckoutSessionMode::Payment);
+
+        let mut metadata = Metadata::new();
+        metadata.insert("payment_id".to_string(), payment.id.to_string());
+        create_session_params.payment_intent_data = Some(CreateCheckoutSessionPaymentIntentData {
+            metadata,
+            ..Default::default()
+        });
 
         let session = CheckoutSession::create(&self.stripe_client, create_session_params)
             .await

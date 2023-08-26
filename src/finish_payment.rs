@@ -3,18 +3,16 @@ use serverless_payments::{
     database::PaymentsRepository,
     domain::PaymentStatus,
     environment::{get_env_var, STRIPE_WEBHOOK_SECRET},
-    request_utils::{get_header, get_query_string_parameter},
+    request_utils::get_header,
 };
-use stripe::Webhook;
+use stripe::{EventObject, Webhook};
 use tracing_subscriber::FmtSubscriber;
 
 const SIGNATURE_HEADER_KEY: &str = "Stripe-Signature";
-const PAYMENT_ID_QUERY_STRING_KEY: &str = "payment_id";
 
 async fn handler(event: Request) -> Result<Response<Body>, Error> {
     let signature = get_header(&event, SIGNATURE_HEADER_KEY)?;
     let webhook_secret = get_env_var(STRIPE_WEBHOOK_SECRET)?;
-    let payment_id = get_query_string_parameter(&event, PAYMENT_ID_QUERY_STRING_KEY)?;
 
     let event_body = match event.body() {
         Body::Text(s) => s,
@@ -25,11 +23,23 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
     };
 
     // constructing the event to validate the incoming data
-    let _webhook_event = Webhook::construct_event(event_body, &signature, &webhook_secret)
-        .map_err(|e| {
+    let webhook_event =
+        Webhook::construct_event(event_body, &signature, &webhook_secret).map_err(|e| {
             tracing::error!("Error constructing webhook event: {e}");
             Error::from(format!("Error constructing webhook event: {e}"))
         })?;
+
+    let payment_id = {
+        let metadata = match webhook_event.data.object {
+            // safe to unwrap, as this charge is the result of a PaymentIntent confirmation
+            EventObject::Charge(charge) => charge.metadata,
+            _ => {
+                tracing::error!("Error getting metadata");
+                return Err(Error::from("Error getting metadata"));
+            }
+        };
+        metadata.get("payment_id").unwrap().to_string()
+    };
 
     let payment_repository = PaymentsRepository::get().await;
     payment_repository
