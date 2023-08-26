@@ -5,7 +5,7 @@ use serverless_payments::{
     environment::{get_env_var, STRIPE_WEBHOOK_SECRET},
     request_utils::get_header,
 };
-use stripe::{generated::core::charge, ChargeStatus, EventObject, Webhook};
+use stripe::{ChargeStatus, EventObject, Webhook};
 use tracing_subscriber::FmtSubscriber;
 
 const SIGNATURE_HEADER_KEY: &str = "Stripe-Signature";
