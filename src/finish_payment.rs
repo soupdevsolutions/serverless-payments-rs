@@ -5,7 +5,7 @@ use serverless_payments::{
     environment::{get_env_var, STRIPE_WEBHOOK_SECRET},
     request_utils::get_header,
 };
-use stripe::{EventObject, Webhook};
+use stripe::{generated::core::charge, ChargeStatus, EventObject, Webhook};
 use tracing_subscriber::FmtSubscriber;
 
 const SIGNATURE_HEADER_KEY: &str = "Stripe-Signature";
@@ -30,8 +30,7 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
         })?;
 
     let payment_id = {
-        let metadata = match webhook_event.data.object {
-            // safe to unwrap, as this charge is the result of a PaymentIntent confirmation
+        let metadata = match webhook_event.data.clone().object {
             EventObject::Charge(charge) => charge.metadata,
             _ => {
                 tracing::error!("Error getting metadata");
@@ -41,9 +40,26 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
         metadata.get("payment_id").unwrap().to_string()
     };
 
+    let charge_status = match webhook_event.data.object {
+        EventObject::Charge(charge) => charge.status,
+        _ => {
+            tracing::error!("Error getting charge status");
+            return Err(Error::from("Error getting charge status"));
+        }
+    };
+
+    let payment_status = match charge_status {
+        ChargeStatus::Succeeded => PaymentStatus::Completed,
+        ChargeStatus::Failed => PaymentStatus::Failed,
+        _ => {
+            tracing::error!("Wrong payment status received");
+            return Err(Error::from("Wrong payment status received"));
+        }
+    };
+
     let payment_repository = PaymentsRepository::get().await;
     payment_repository
-        .update_payment_status(&payment_id, PaymentStatus::Completed)
+        .update_payment_status(&payment_id, payment_status)
         .await?;
 
     Ok(Response::new(Body::from(())))

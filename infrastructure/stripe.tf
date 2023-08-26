@@ -3,5 +3,6 @@ resource "stripe_webhook_endpoint" "successful_payments" {
 
   enabled_events = [
     "charge.succeeded",
+    "charge.failed"
   ]
 }
