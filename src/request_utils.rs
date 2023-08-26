@@ -1,4 +1,4 @@
-use lambda_http::{Body, Request};
+use lambda_http::{Body, Request, RequestExt};
 use serde::de::DeserializeOwned;
 
 #[tracing::instrument]
@@ -25,4 +25,14 @@ pub fn get_header(event: &Request, header: &str) -> Result<String, String> {
         .map_err(|e| e.to_string())?
         .to_string();
     Ok(header)
+}
+
+#[tracing::instrument]
+pub fn get_query_string_parameter(event: &Request, key: &str) -> Result<String, String> {
+    let query_string = event
+        .query_string_parameters()
+        .first(key)
+        .ok_or_else(|| format!("Missing query string: {}", key))?
+        .to_string();
+    Ok(query_string)
 }

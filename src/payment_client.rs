@@ -1,7 +1,5 @@
-use std::collections::HashMap;
-
 use crate::{
-    domain::PaymentRequest,
+    domain::Payment,
     environment::{get_env_var, DOMAIN, STRIPE_SECRET_KEY},
 };
 use stripe::{
@@ -9,7 +7,6 @@ use stripe::{
     CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData,
     CreateCheckoutSessionLineItemsPriceDataProductData, Currency,
 };
-use uuid::Uuid;
 
 pub struct PaymentClient {
     stripe_client: stripe::Client,
@@ -30,25 +27,19 @@ impl PaymentClient {
         }
     }
 
-    #[tracing::instrument(skip(self, payment_request), fields(sender = %payment_request.sender, amount = %payment_request.amount))]
-    pub async fn initiate_payment(
-        self,
-        payment_request: &PaymentRequest,
-    ) -> Result<InitiatePaymentResponse, String> {
-        let domain = get_env_var(DOMAIN)?;
-
-        // generate a payment id to add to the metadata
-        let payment_id = Uuid::new_v4().to_string();
+    #[tracing::instrument(skip(self, payment), fields(sender = %payment.sender, amount = %payment.amount))]
+    pub async fn initiate_payment(self, payment: &Payment) -> Result<String, String> {
+        let domain = format!("{}?payment_id={}", get_env_var(DOMAIN)?, payment.id);
 
         let mut create_session_params = CreateCheckoutSession::new(&domain);
         create_session_params.line_items = Some(vec![CreateCheckoutSessionLineItems {
             price_data: Some(CreateCheckoutSessionLineItemsPriceData {
                 currency: Currency::USD,
                 product_data: Some(CreateCheckoutSessionLineItemsPriceDataProductData {
-                    name: format!("Payment from {}", payment_request.sender),
+                    name: format!("Payment from {}", payment.sender),
                     ..Default::default()
                 }),
-                unit_amount: Some(payment_request.amount),
+                unit_amount: Some(payment.amount),
                 ..Default::default()
             }),
             quantity: Some(1),
@@ -56,23 +47,11 @@ impl PaymentClient {
         }]);
         create_session_params.mode = Some(CheckoutSessionMode::Payment);
 
-        let mut metadata = HashMap::new();
-        metadata.insert("payment_id".into(), payment_id.clone());
-        create_session_params.metadata = Some(metadata);
-
         let session = CheckoutSession::create(&self.stripe_client, create_session_params)
             .await
             .map_err(|e| e.to_string())?;
 
-        Ok(InitiatePaymentResponse {
-            payment_id,
-            // safe to unwrap, as this is an active session that we just created
-            redirect_url: session.url.unwrap(),
-        })
+        // safe to unwrap, as this is an active session that we just created
+        Ok(session.url.unwrap())
     }
-}
-
-pub struct InitiatePaymentResponse {
-    pub payment_id: String,
-    pub redirect_url: String,
 }
