@@ -26,11 +26,11 @@ resource "aws_apigatewayv2_deployment" "api_deployment" {
   }
 
   triggers = {
-    redeployment = sha1(join(",", tolist([
-      jsonencode(aws_apigatewayv2_api.api),
-      jsonencode(aws_apigatewayv2_route.initiate_payment_route),
-      jsonencode(aws_apigatewayv2_route.finish_payment_route),
-    ])))
+    redeployment = sha1(
+      jsonencode([
+        file("api_gateway.tf"),
+      ])
+    )
   }
 }
 
