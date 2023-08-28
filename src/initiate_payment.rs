@@ -1,8 +1,8 @@
 use lambda_http::{service_fn, Body, Error, Request, Response};
 use serverless_payments::{
-    database::PaymentsRepository,
     domain::{Payment, PaymentRequest, PaymentStatus},
     payment_client::PaymentClient,
+    payments_repository::PaymentsRepository,
     request_utils::get_body,
 };
 use tracing_subscriber::FmtSubscriber;
