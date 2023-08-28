@@ -1,8 +1,8 @@
 use lambda_http::{service_fn, Body, Error, Request, Response};
 use serverless_payments::{
-    database::PaymentsRepository,
     domain::PaymentStatus,
     environment::{get_env_var, STRIPE_WEBHOOK_SECRET},
+    payments_repository::PaymentsRepository,
     request_utils::get_header,
 };
 use stripe::{ChargeStatus, EventObject, Webhook};
