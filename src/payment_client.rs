@@ -1,6 +1,6 @@
 use crate::{
-    domain::Payment,
     environment::{get_env_var, DOMAIN, STRIPE_SECRET_KEY},
+    payment::Payment,
 };
 use stripe::{
     CheckoutSession, CheckoutSessionMode, Client, CreateCheckoutSession,

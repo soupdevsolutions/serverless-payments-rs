@@ -2,8 +2,8 @@ use aws_sdk_dynamodb::{types::AttributeValue, Client};
 use tokio::sync::OnceCell;
 
 use crate::{
-    domain::{Payment, PaymentStatus},
     environment::{get_env_var, PAYMENTS_TABLE},
+    payment::{Payment, PaymentStatus},
 };
 
 pub static PAYMENTS_REPOSITORY: OnceCell<PaymentsRepository> = OnceCell::const_new();

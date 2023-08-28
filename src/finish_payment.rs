@@ -1,7 +1,7 @@
 use lambda_http::{service_fn, Body, Error, Request, Response};
 use serverless_payments::{
-    domain::PaymentStatus,
     environment::{get_env_var, STRIPE_WEBHOOK_SECRET},
+    payment::PaymentStatus,
     payments_repository::PaymentsRepository,
     request_utils::get_header,
 };
