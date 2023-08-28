@@ -32,7 +32,7 @@ impl PaymentsRepository {
         Self { client, table_name }
     }
 
-    pub async fn insert_payment(self, payment: Payment) -> Result<(), String> {
+    pub async fn insert_payment(&self, payment: Payment) -> Result<(), String> {
         let id = AttributeValue::S(payment.id);
         let amount = AttributeValue::N(payment.amount.to_string());
         let sender = AttributeValue::S(payment.sender);
@@ -41,7 +41,7 @@ impl PaymentsRepository {
         let _request = self
             .client
             .put_item()
-            .table_name(self.table_name)
+            .table_name(&self.table_name)
             .item("id", id)
             .item("amount", amount)
             .item("sender", sender)
@@ -54,7 +54,7 @@ impl PaymentsRepository {
     }
 
     pub async fn update_payment_status(
-        self,
+        &self,
         payment_id: &str,
         new_status: PaymentStatus,
     ) -> Result<(), String> {
@@ -64,7 +64,7 @@ impl PaymentsRepository {
         let _request = self
             .client
             .update_item()
-            .table_name(self.table_name)
+            .table_name(&self.table_name)
             .key("id", id)
             .update_expression("SET #status = :status")
             .expression_attribute_names("#status", "status")

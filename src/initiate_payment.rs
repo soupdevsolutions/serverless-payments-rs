@@ -30,7 +30,6 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
     // Send the event to Stripe
     let payment_client = PaymentClient::new();
     let redirect_url = payment_client.initiate_payment(&payment).await?;
-
     // Save the data in DynamoDB
     let payments_repository = PaymentsRepository::get().await;
     payments_repository.insert_payment(payment).await?;

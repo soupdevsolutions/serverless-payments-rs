@@ -29,7 +29,7 @@ impl PaymentClient {
     }
 
     #[tracing::instrument(skip(self, payment), fields(sender = %payment.sender, amount = %payment.amount))]
-    pub async fn initiate_payment(self, payment: &Payment) -> Result<String, String> {
+    pub async fn initiate_payment(&self, payment: &Payment) -> Result<String, String> {
         let domain = get_env_var(DOMAIN)?;
 
         let mut create_session_params = CreateCheckoutSession::new(&domain);
