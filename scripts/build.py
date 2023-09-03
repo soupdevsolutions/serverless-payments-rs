@@ -5,7 +5,7 @@ import sys
 
 commands = [
     "pip3 install cargo-lambda",
-    "cargo lambda build --release --arm64 --output-format zip"
+    "cargo lambda build --release --output-format zip"
 ]
 os.system("; ".join(commands))
 
