@@ -4,7 +4,7 @@ import os
 import sys
 
 commands = [
-    "sudo apt-get install libssl pkg-config libssl-dev",
+    "sudo apt-get install pkg-config libssl-dev openssl-dev musl-dev",
     "pip3 install cargo-lambda",
     "cargo lambda build --release --arm64 --output-format zip"
 ]
