@@ -9,13 +9,13 @@ use serverless_payments::{
 use tracing_subscriber::FmtSubscriber;
 use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Deserialize)]
 pub struct InitiatePaymentRequest {
     pub amount: i64,
     pub sender: String,
 }
 
-#[derive(serde::Serialize)]
+#[derive(Serialize)]
 pub struct InitiatePaymentResponse {
     pub redirect_url: String,
 }

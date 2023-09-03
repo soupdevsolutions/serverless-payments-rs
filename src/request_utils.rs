@@ -6,8 +6,7 @@ pub fn get_body<T>(event: Request) -> Result<T, String>
 where
     T: DeserializeOwned,
 {
-    let body = event.body();
-    let body = match body {
+    let body = match event.body() {
         Body::Text(body) => body.as_str(),
         _ => return Err("Invalid body".into()),
     };
