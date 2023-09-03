@@ -4,12 +4,8 @@ import os
 import sys
 
 commands = [
-    "sudo apt-get install openssl libssl musl-tools pkg-config libssl-dev",
-    "OPENSSL_LIB_DIR=\"/usr/lib/x86_64-linux-gnu\"",
-    "OPENSSL_INCLUDE_DIR=\"/usr/include/openssl\"",
-    "cargo clean",
     "pip3 install cargo-lambda",
-    "cargo lambda build --release --output-format zip"
+    "cargo lambda build --release --arm64 --output-format zip"
 ]
 os.system("; ".join(commands))
 

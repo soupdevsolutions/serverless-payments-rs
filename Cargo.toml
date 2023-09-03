@@ -18,8 +18,6 @@ path = "src/finish_payment.rs"
 
 
 [dependencies]
-# for cross-compilation
-openssl = { version = "0.10", features = ["vendored"] }
 # for the async runtime
 tokio = { version = "1", features = ["full"] }
 # for json (de)serialization
