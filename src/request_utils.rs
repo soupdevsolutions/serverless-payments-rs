@@ -2,7 +2,7 @@ use lambda_http::{Body, Request};
 use serde::de::DeserializeOwned;
 
 #[tracing::instrument]
-pub fn get_body<T>(event: Request) -> Result<T, String>
+pub fn get_body<T>(event: &Request) -> Result<T, String>
 where
     T: DeserializeOwned,
 {

@@ -23,7 +23,7 @@ pub struct InitiatePaymentResponse {
 #[tracing::instrument]
 async fn handler(event: Request) -> Result<Response<Body>, Error> {
     // Get the payment request from the event
-    let payment_request: InitiatePaymentRequest = get_body(event)?;
+    let payment_request: InitiatePaymentRequest = get_body(&event)?;
 
     // generate a payment id to attach it to the webhook success uri
     let payment_id = Uuid::new_v4().to_string();
