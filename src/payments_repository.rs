@@ -2,7 +2,7 @@ use aws_sdk_dynamodb::{types::AttributeValue, Client};
 use tokio::sync::OnceCell;
 
 use crate::{
-    environment::{get_env_var, PAYMENTS_TABLE},
+    environment::PAYMENTS_TABLE,
     payment::{Payment, PaymentStatus},
 };
 
@@ -26,7 +26,7 @@ impl PaymentsRepository {
     }
 
     fn new(client: Client) -> Self {
-        let table_name = get_env_var(PAYMENTS_TABLE)
+        let table_name = std::env::var(PAYMENTS_TABLE)
             .unwrap_or_else(|_| panic!("{} variable not set", PAYMENTS_TABLE));
 
         Self { client, table_name }

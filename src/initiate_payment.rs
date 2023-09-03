@@ -35,7 +35,7 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
 
     // Send the event to Stripe
     let payment_client = PaymentClient::new();
-    // Get the redirect URL from the `initiiate payment` process
+    // Get the redirect URL from the `initiate payment` process
     let redirect_url = payment_client.initiate_payment(&payment).await?;
     // Get the singleton instance of the payments repository
     let payments_repository = PaymentsRepository::get().await;

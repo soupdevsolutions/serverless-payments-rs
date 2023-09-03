@@ -1,9 +1,7 @@
 use lambda_http::{service_fn, Body, Error, Request, Response};
 use serverless_payments::{
-    environment::{get_env_var, STRIPE_WEBHOOK_SECRET},
-    payment::PaymentStatus,
-    payments_repository::PaymentsRepository,
-    request_utils::get_header,
+    environment::STRIPE_WEBHOOK_SECRET, payment::PaymentStatus,
+    payments_repository::PaymentsRepository, request_utils::get_header,
 };
 use stripe::{ChargeStatus, EventObject, Webhook};
 use tracing_subscriber::FmtSubscriber;
@@ -12,7 +10,7 @@ const SIGNATURE_HEADER_KEY: &str = "Stripe-Signature";
 
 async fn handler(event: Request) -> Result<Response<Body>, Error> {
     let signature = get_header(&event, SIGNATURE_HEADER_KEY)?;
-    let webhook_secret = get_env_var(STRIPE_WEBHOOK_SECRET)?;
+    let webhook_secret = std::env::var(STRIPE_WEBHOOK_SECRET).map_err(|e| e.to_string())?;
 
     let event_body = match event.body() {
         Body::Text(s) => s,

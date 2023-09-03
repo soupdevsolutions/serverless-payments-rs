@@ -1,5 +1,5 @@
 use crate::{
-    environment::{get_env_var, DOMAIN, STRIPE_SECRET_KEY},
+    environment::{DOMAIN, STRIPE_SECRET_KEY},
     payment::Payment,
 };
 use stripe::{
@@ -21,7 +21,7 @@ impl Default for PaymentClient {
 
 impl PaymentClient {
     pub fn new() -> Self {
-        let secret_key = get_env_var(STRIPE_SECRET_KEY)
+        let secret_key = std::env::var(STRIPE_SECRET_KEY)
             .unwrap_or_else(|_| format!("{} variable not set", STRIPE_SECRET_KEY));
         Self {
             stripe_client: Client::new(secret_key),
@@ -30,7 +30,7 @@ impl PaymentClient {
 
     #[tracing::instrument(skip(self, payment), fields(sender = %payment.sender, amount = %payment.amount))]
     pub async fn initiate_payment(&self, payment: &Payment) -> Result<String, String> {
-        let domain = get_env_var(DOMAIN)?;
+        let domain = std::env::var(DOMAIN).map_err(|e| e.to_string())?;
 
         let mut create_session_params = CreateCheckoutSession::new(&domain);
         create_session_params.line_items = Some(vec![CreateCheckoutSessionLineItems {
