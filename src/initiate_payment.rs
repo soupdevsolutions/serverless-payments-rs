@@ -1,3 +1,4 @@
+use aws_sdk_dynamodb::Client;
 use lambda_http::{service_fn, Body, Error, Request, Response};
 use serde::{Deserialize, Serialize};
 use serverless_payments::{
@@ -20,8 +21,12 @@ pub struct InitiatePaymentResponse {
     pub redirect_url: String,
 }
 
-#[tracing::instrument]
-async fn handler(event: Request) -> Result<Response<Body>, Error> {
+#[tracing::instrument(skip(payments_repository, payment_client))]
+async fn handler(
+    payments_repository: &PaymentsRepository,
+    payment_client: &PaymentClient,
+    event: Request,
+) -> Result<Response<Body>, Error> {
     // Get the payment request from the event
     let payment_request: InitiatePaymentRequest = get_body(&event)?;
 
@@ -33,12 +38,9 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
         PaymentStatus::Pending,
     );
 
-    // Send the event to Stripe
-    let payment_client = PaymentClient::new();
     // Get the redirect URL from the `initiate payment` process
     let redirect_url = payment_client.initiate_payment(&payment).await?;
     // Get the singleton instance of the payments repository
-    let payments_repository = PaymentsRepository::get().await;
     // Save the data in DynamoDB
     payments_repository.insert_payment(payment).await?;
 
@@ -57,6 +59,16 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .with_target(false)
         .init();
-    lambda_http::run(service_fn(handler)).await?;
+
+    let aws_config = aws_config::load_from_env().await;
+    let dynamodb_client = Client::new(&aws_config);
+
+    let payments_repository = PaymentsRepository::new(dynamodb_client);
+    let payment_client = PaymentClient::new();
+
+    lambda_http::run(service_fn(|request| {
+        handler(&payments_repository, &payment_client, request)
+    }))
+    .await?;
     Ok(())
 }

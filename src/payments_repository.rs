@@ -1,12 +1,9 @@
 use aws_sdk_dynamodb::{types::AttributeValue, Client};
-use tokio::sync::OnceCell;
 
 use crate::{
     environment::PAYMENTS_TABLE,
     payment::{Payment, PaymentStatus},
 };
-
-pub static PAYMENTS_REPOSITORY: OnceCell<PaymentsRepository> = OnceCell::const_new();
 
 #[derive(Clone)]
 pub struct PaymentsRepository {
@@ -15,17 +12,7 @@ pub struct PaymentsRepository {
 }
 
 impl PaymentsRepository {
-    pub async fn get() -> PaymentsRepository {
-        PAYMENTS_REPOSITORY
-            .get_or_init(|| async {
-                let client = Client::new(&aws_config::load_from_env().await);
-                PaymentsRepository::new(client)
-            })
-            .await
-            .clone()
-    }
-
-    fn new(client: Client) -> Self {
+    pub fn new(client: Client) -> Self {
         let table_name = std::env::var(PAYMENTS_TABLE)
             .unwrap_or_else(|_| panic!("{} variable not set", PAYMENTS_TABLE));
 

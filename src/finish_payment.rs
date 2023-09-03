@@ -1,3 +1,4 @@
+use aws_sdk_dynamodb::Client;
 use lambda_http::{service_fn, Body, Error, Request, Response};
 use serverless_payments::{
     environment::STRIPE_WEBHOOK_SECRET, payment::PaymentStatus,
@@ -8,7 +9,10 @@ use tracing_subscriber::FmtSubscriber;
 
 const SIGNATURE_HEADER_KEY: &str = "Stripe-Signature";
 
-async fn handler(event: Request) -> Result<Response<Body>, Error> {
+async fn handler(
+    payments_repository: &PaymentsRepository,
+    event: Request,
+) -> Result<Response<Body>, Error> {
     let signature = get_header(&event, SIGNATURE_HEADER_KEY)?;
     let webhook_secret = std::env::var(STRIPE_WEBHOOK_SECRET).map_err(|e| e.to_string())?;
 
@@ -55,8 +59,7 @@ async fn handler(event: Request) -> Result<Response<Body>, Error> {
         }
     };
 
-    let payment_repository = PaymentsRepository::get().await;
-    payment_repository
+    payments_repository
         .update_payment_status(&payment_id, payment_status)
         .await?;
 
@@ -71,6 +74,12 @@ async fn main() -> Result<(), Error> {
         .without_time()
         .with_target(false)
         .init();
-    lambda_http::run(service_fn(handler)).await?;
+
+    let aws_config = aws_config::load_from_env().await;
+    let dynamodb_client = Client::new(&aws_config);
+
+    let payments_repository = PaymentsRepository::new(dynamodb_client);
+
+    lambda_http::run(service_fn(|request| handler(&payments_repository, request))).await?;
     Ok(())
 }
