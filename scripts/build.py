@@ -4,6 +4,7 @@ import os
 import sys
 
 commands = [
+    "sudo apt-get install openssl libssl musl-tools pkg-config libssl-dev",
     "pip3 install cargo-lambda",
     "cargo lambda build --release --arm64 --output-format zip"
 ]
