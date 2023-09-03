@@ -65,8 +65,6 @@ data "aws_iam_policy_document" "finish_payment_policy_document" {
   statement {
     actions = [
       "dynamodb:UpdateItem",
-      "dynamodb:Query",
-      "dynamodb:GetItem"
     ]
     resources = [
       aws_dynamodb_table.payments.arn,

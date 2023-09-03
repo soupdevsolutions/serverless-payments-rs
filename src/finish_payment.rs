@@ -16,6 +16,7 @@ async fn handler(
     let signature = get_header(&event, SIGNATURE_HEADER_KEY)?;
     let webhook_secret = std::env::var(STRIPE_WEBHOOK_SECRET).map_err(|e| e.to_string())?;
 
+    // getting the event body as a string
     let event_body = match event.body() {
         Body::Text(s) => s,
         _ => {
@@ -31,26 +32,20 @@ async fn handler(
             Error::from(format!("Error constructing webhook event: {e}"))
         })?;
 
-    let payment_id = {
-        let metadata = match webhook_event.data.clone().object {
-            EventObject::Charge(charge) => charge.metadata,
-            _ => {
-                tracing::error!("Error getting metadata");
-                return Err(Error::from("Error getting metadata"));
-            }
-        };
-        metadata.get("payment_id").unwrap().to_string()
-    };
-
-    let charge_status = match webhook_event.data.object {
-        EventObject::Charge(charge) => charge.status,
+    // confirming that the event is a charge.
+    let charge = match webhook_event.data.object {
+        EventObject::Charge(charge) => charge,
         _ => {
-            tracing::error!("Error getting charge status");
-            return Err(Error::from("Error getting charge status"));
+            tracing::error!("The event is not a charge");
+            return Err(Error::from("The event is not a charge"));
         }
     };
 
-    let payment_status = match charge_status {
+    // getting the payment id from the event's metadata
+    let payment_id = charge.metadata.get("payment_id").unwrap().to_string();
+
+    // matching our payment status to Stripe's charge status
+    let payment_status = match charge.status {
         ChargeStatus::Succeeded => PaymentStatus::Completed,
         ChargeStatus::Failed => PaymentStatus::Failed,
         _ => {
@@ -59,6 +54,7 @@ async fn handler(
         }
     };
 
+    // updatig the payment status in the database
     payments_repository
         .update_payment_status(&payment_id, payment_status)
         .await?;
