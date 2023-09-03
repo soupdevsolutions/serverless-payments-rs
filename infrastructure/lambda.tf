@@ -2,8 +2,8 @@
 resource "aws_lambda_function" "initiate_payment_lambda" {
   function_name = "InitiatePayment"
 
-  source_code_hash = filebase64sha256("data/lambdas/initiate_payment.zip")
   filename         = "data/lambdas/initiate_payment.zip"
+  source_code_hash = filebase64sha256("data/lambdas/initiate_payment.zip")
 
   handler = "handler"
   runtime = "provided.al2"

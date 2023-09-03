@@ -1,11 +1,9 @@
 use aws_sdk_dynamodb::{types::AttributeValue, Client};
 
-use crate::{
-    environment::PAYMENTS_TABLE,
-    payment::{Payment, PaymentStatus},
-};
+use crate::payment::{Payment, PaymentStatus};
 
-#[derive(Clone)]
+pub const PAYMENTS_TABLE: &str = "PAYMENTS_TABLE_NAME";
+
 pub struct PaymentsRepository {
     client: Client,
     table_name: String,
@@ -25,8 +23,7 @@ impl PaymentsRepository {
         let sender = AttributeValue::S(payment.sender);
         let status = AttributeValue::N((payment.status as i8).to_string());
 
-        let _request = self
-            .client
+        self.client
             .put_item()
             .table_name(&self.table_name)
             .item("id", id)

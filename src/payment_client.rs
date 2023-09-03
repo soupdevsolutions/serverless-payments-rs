@@ -1,13 +1,13 @@
-use crate::{
-    environment::{DOMAIN, STRIPE_SECRET_KEY},
-    payment::Payment,
-};
+use crate::payment::Payment;
 use stripe::{
     CheckoutSession, CheckoutSessionMode, Client, CreateCheckoutSession,
     CreateCheckoutSessionLineItems, CreateCheckoutSessionLineItemsPriceData,
     CreateCheckoutSessionLineItemsPriceDataProductData, CreateCheckoutSessionPaymentIntentData,
     Currency, Metadata,
 };
+
+pub const STRIPE_SECRET_KEY: &str = "STRIPE_SECRET_KEY";
+pub const DOMAIN: &str = "DOMAIN";
 
 pub struct PaymentClient {
     stripe_client: stripe::Client,
@@ -28,10 +28,12 @@ impl PaymentClient {
         }
     }
 
-    #[tracing::instrument(skip(self, payment), fields(sender = %payment.sender, amount = %payment.amount))]
+    #[tracing::instrument(skip(self))]
     pub async fn initiate_payment(&self, payment: &Payment) -> Result<String, String> {
+        // Get the website domain from the environment
         let domain = std::env::var(DOMAIN).map_err(|e| e.to_string())?;
 
+        // Create the Stripe Checkout Session parameters
         let mut create_session_params = CreateCheckoutSession::new(&domain);
         create_session_params.line_items = Some(vec![CreateCheckoutSessionLineItems {
             price_data: Some(CreateCheckoutSessionLineItemsPriceData {
@@ -46,8 +48,10 @@ impl PaymentClient {
             quantity: Some(1),
             ..Default::default()
         }]);
+        // Set the mode to payment
         create_session_params.mode = Some(CheckoutSessionMode::Payment);
 
+        // Add the payment id to the metadata
         let mut metadata = Metadata::new();
         metadata.insert("payment_id".to_string(), payment.id.to_string());
         create_session_params.payment_intent_data = Some(CreateCheckoutSessionPaymentIntentData {
@@ -55,6 +59,7 @@ impl PaymentClient {
             ..Default::default()
         });
 
+        // Create the Stripe Checkout Session
         let session = CheckoutSession::create(&self.stripe_client, create_session_params)
             .await
             .map_err(|e| e.to_string())?;

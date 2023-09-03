@@ -20,7 +20,6 @@ data "aws_iam_policy_document" "initiate_payment_policy_document" {
     ]
     resources = [
       aws_dynamodb_table.payments.arn,
-      "${aws_dynamodb_table.payments.arn}/*",
     ]
   }
   statement {
@@ -48,7 +47,6 @@ resource "aws_iam_role_policy_attachment" "initiate_payment_policy_attachment" {
 }
 
 # FINISH PAYMENT LAMBDA ROLE/POLICIES
-
 resource "aws_iam_role" "finish_payment" {
   assume_role_policy = data.aws_iam_policy_document.finish_payment_assume_policy.json
 }
@@ -72,7 +70,6 @@ data "aws_iam_policy_document" "finish_payment_policy_document" {
     ]
     resources = [
       aws_dynamodb_table.payments.arn,
-      "${aws_dynamodb_table.payments.arn}/*",
     ]
   }
 
