@@ -18,14 +18,20 @@ path = "src/finish_payment.rs"
 
 
 [dependencies]
-lambda_http = "0.8.1"
-tokio = { version = "1", features = ["macros", "sync", "parking_lot"] }
+# for the async runtime
+tokio = { version = "1", features = ["full"] }
+# for json (de)serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+# for working with Stripe
 async-stripe = { version = "0.22", features = ["runtime-tokio-hyper"] }
+# for communicating with DynamoDB
 aws-sdk-dynamodb = "0.29.0"
 aws-config = "0.56.0"
-openssl = { version = "0.10", features = ["vendored"] }
+# for the Lambda runtime
+lambda_http = "0.8.1"
+# for logging
 tracing = "0.1"
 tracing-subscriber = "0.3"
+# for generating payment IDs
 uuid = { version = "1.4.1", features = ["v4"] }
