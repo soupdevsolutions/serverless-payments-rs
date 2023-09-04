@@ -1,5 +1,4 @@
 # builds the lambda functions and copies them to the infrastructure folder
-
 import os
 import sys
 
